@@ -2,8 +2,11 @@
 Se introduce in automat.txt automatul pe care vrem sa il reducem la unul minimal
 
 formatul este :
+
 linia 1 : starea initiala
+
 urmatoarele linii : nod muchie nod
+
 ultima linie : starile finale
 
 in output.txt se printeaza automatul minimal sub aceeasi forma
