@@ -1,19 +1,12 @@
-a
-3 4
-b
-0 7
-aa
-3 4
-ab
-0 7
-ba
-4 3
-bb
-0 7
-?? aa aa a a a aa 
-aa ?? ?? a a a ba 
-aa ?? ?? a a a ba 
-a a a ?? ?? ba a 
-a a a ?? ?? ba a 
-a a a ba ba ?? a 
-YY YY YY YY YY YY ?? 
+A
+A a B
+A b C
+B a C
+B b B
+C a D
+C b E
+D a C
+D b E
+E a D
+E b B
+D 

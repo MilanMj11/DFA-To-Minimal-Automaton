@@ -9,17 +9,27 @@ ofstream fout("output.txt");
 
 const int NMAX = 10005;
 vector< pair<int,char> > graf[NMAX]; /// v[i] = { vecin , muchie }
+vector< pair<int,char> > graf_minimal[NMAX];
 map<string,int> conversie;  /// conversie[node] = indicele
+map<string,int> conversie_minimal; /// conversie_minimal[node_nou] = indice_nou;
+map<string,string> atribuire; /// atribuire[node_vechi] = node_nou  -> la graful minimal;
+bool ver_minimal[NMAX];
 string conv[NMAX];          /// conv[indice] = node;
+string conv_minimal[NMAX];
 vector<string> stari_finale;
+vector<string> stari_finale_minimal;
 string stare_initiala = "";
+string stare_initiala_minimal = "";
 vector<char> List_litere;   /// lista cu literele
 vector<string> List_stari;  /// lista cu starile
+vector<string> List_stari_minimale;
 string tabel[100][100];     /// tabelul pentru rezolvarea automatului minimal
 int cnt_stari_finale = 0;
 int cnt_nodes = 0;
 int cnt_litere = 0;
+int cnt_stari_minimal = 0;
 
+void afisare_graf_minimal();
 void procesare_linie(string s){
     string node1 = "",node2 = "";
     char muchie;
@@ -181,20 +191,28 @@ void genereaza_cuvinte(int lungime,int ind = 1){
     }
 }
 
+bool tabel_complet(){
+    int cnt = 0;
+    for(int i=0;i<List_litere.size();i++){
+        for(int j=0;j<List_litere.size();j++){
+            if(tabel[i][j] == "??") cnt++;
+        }
+    }
+}
+
 void completam_tabel(){
 
     int lungime = 1;
     //a[0]=1;
     while(true){
-
-        if(lungime>cnt_litere) break;
+       // if(tabel_complet() == true) break;
+        if(lungime>List_stari.size()) break; /// NU ASTA E CONDITIA DE OPRIRE
         Lista_gen.clear();
         genereaza_cuvinte(lungime);
         vector<string> Finale,NeFinale;
         for(int i=0;i<Lista_gen.size();i++){
 
             string cuvant = Lista_gen[i];
-            fout << cuvant << '\n';
             for(int j=0;j<List_stari.size();j++){
                 string stare = List_stari[j];
                 bool ACC = bfs(stare,cuvant);
@@ -203,9 +221,7 @@ void completam_tabel(){
                 } else  NeFinale.push_back(stare);
             }
 
-            fout << Finale.size() << ' ' << NeFinale.size() << '\n';
             /// acum avem cele care apartin de F si cele care apartin de NF
-
             for(int i1=0;i1<Finale.size();i1++){
                 int linie = conversie[Finale[i1]]-1;
                 for(int j1=0;j1<NeFinale.size();j1++){
@@ -224,26 +240,104 @@ void completam_tabel(){
         lungime++;
     }
 
+}
 
+void afis_tabel(){
     for(int i=0;i<List_stari.size();i++){
-        for(int j=0;j<List_stari.size();j++){
+        for(int j=0;j<=List_stari.size();j++){
             fout << tabel[i][j] << ' ';
         }
         fout << '\n';
     }
 }
 
+void reconstructiv_graph(){
+    /// gasesc liniile din tabel care sunt identice
+    /// ultima coloana a tabelului reprezeinta si noile denumiri ale nodurilor
+    /// practic atribui nodurilor care urmeaza a fi "combinate" aceeasi denumire
+    for(int i=0;i<List_stari.size();i++){
+        if(tabel[i][List_stari.size()] != "??") continue;
+
+        tabel[i][List_stari.size()] = 'A'-1+ ++cnt_stari_minimal;
+        List_stari_minimale.push_back(tabel[i][List_stari.size()]);
+        conversie_minimal.insert(make_pair(tabel[i][List_stari.size()],cnt_stari_minimal));
+        conv_minimal[cnt_stari_minimal] = tabel[i][List_stari.size()];
+        for(int j=i+1;j<List_stari.size();j++){
+
+            /// daca liniile i si j sunt egale atunci nodurile alea can "act like one"
+            bool egale = true;
+            for(int t=0;t<List_stari.size();t++){
+                if(tabel[i][t] != tabel[j][t]){
+                    egale = false;
+                    break;
+                }
+            }
+            if(egale == true){
+                tabel[j][List_stari.size()] = 'A'-1 + cnt_stari_minimal;
+            }
+        }
+    }
+    for(int i=0;i<List_stari.size();i++){
+        atribuire.insert(make_pair(List_stari[i],tabel[i][List_stari.size()]));
+        /// pentru fiecare stare din graful vechi atribuim nodurile din graful minimal;
+    }
+//    for(auto it : atribuire){
+//        fout << it.first << ' ' << it.second << '\n';
+//    }
+    for(int i=0;i<List_stari.size();i++){
+        string node = List_stari[i];
+        int node_int = conversie[node];
+
+        if(ver_minimal[conversie_minimal[tabel[i][List_stari.size()]]] == true) continue;
+
+        ver_minimal[conversie_minimal[tabel[i][List_stari.size()]]] = true;
+
+        for(int j=0;j<graf[node_int].size();j++){
+            pair<int,char> aux = graf[node_int][j];
+            int ind_vecin = aux.first;
+            char litera = aux.second;
+            string vecin = conv[ind_vecin];
+            //fout << ind_vecin << ' ' << litera << '\n';
+            graf_minimal[conversie_minimal[atribuire[node]]].push_back(make_pair(conversie_minimal[atribuire[vecin]],litera));
+            //fout << conversie_minimal[atribuire[node]] << ' ' << conversie_minimal[atribuire[vecin]] << ' ' << litera << '\n';
+        }
+    }
+    /// am creat acum si graful minimal
+    /// am sa il afisam acum
+
+    afisare_graf_minimal();
+}
+
+void afisare_graf_minimal() {
+    stare_initiala_minimal = atribuire[stare_initiala];
+    fout << stare_initiala_minimal << '\n';
+    for(int i=0;i<List_stari_minimale.size();i++){
+        string node = List_stari_minimale[i];
+        int node_int = conversie_minimal[node];
+        for(int j=0;j<graf_minimal[node_int].size();j++){
+            pair<int,char> aux =  graf_minimal[node_int][j];
+            int vecin_ind = aux.first;
+            char litera = aux.second;
+            string vecin = conv_minimal[vecin_ind];
+            fout << node << ' ' << litera << ' ' << vecin << '\n';
+        }
+    }
+    for(int i=0;i<stari_finale.size();i++){
+        stari_finale_minimal.push_back(atribuire[stari_finale[i]]);
+        fout << stari_finale_minimal[i] << ' ';
+    }
+    fout << '\n';
+}
+
 void solve(){
-    string cuvant;
-    f_input >> cuvant;
-
-    //bfs(stare_initiala,cuvant); /// True/False  Acceptat/Nu
-
     construct_lista_litere();
     cnt_litere = List_litere.size();
 
     completam_tabel_cu_lambda();
     completam_tabel();
+    /// tabelul e complet
+    reconstructiv_graph();
+    //afis_tabel();
 }
 
 int main() {
