@@ -1,0 +1,3 @@
+C:/Users/Milan/Documents/GitHub/LFA_Tema2/cmake-build-debug/CMakeFiles/LFA_Tema2.dir
+C:/Users/Milan/Documents/GitHub/LFA_Tema2/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Milan/Documents/GitHub/LFA_Tema2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
