@@ -1,2 +1,19 @@
-->q0->q1->q3->q6
-acceptat
+a
+3 4
+b
+0 7
+aa
+3 4
+ab
+0 7
+ba
+4 3
+bb
+0 7
+?? aa aa a a a aa 
+aa ?? ?? a a a ba 
+aa ?? ?? a a a ba 
+a a a ?? ?? ba a 
+a a a ?? ?? ba a 
+a a a ba ba ?? a 
+YY YY YY YY YY YY ?? 
