@@ -4,7 +4,6 @@ using namespace std;
 
 ifstream fin("automat.txt");
 ifstream fin_aux("automat.txt");
-ifstream f_input("input.txt");
 ofstream fout("output.txt");
 
 const int NMAX = 10005;
@@ -204,12 +203,17 @@ void completam_tabel(){
 
     int lungime = 1;
     //a[0]=1;
+    bool schimbare = true;
     while(true){
        // if(tabel_complet() == true) break;
-        if(lungime>List_stari.size()) break; /// NU ASTA E CONDITIA DE OPRIRE
+        /// conditia de oprire
+        if(schimbare == false) break;
+        /// __________________
+        ///if(lungime>List_stari.size()) break; /// NU ASTA E CONDITIA DE OPRIRE
         Lista_gen.clear();
         genereaza_cuvinte(lungime);
         vector<string> Finale,NeFinale;
+        schimbare = false;
         for(int i=0;i<Lista_gen.size();i++){
 
             string cuvant = Lista_gen[i];
@@ -226,10 +230,14 @@ void completam_tabel(){
                 int linie = conversie[Finale[i1]]-1;
                 for(int j1=0;j1<NeFinale.size();j1++){
                     int coloana = conversie[NeFinale[j1]]-1;
-                    if(tabel[linie][coloana]=="??")
+                    if(tabel[linie][coloana]=="??"){
+                        schimbare = true;
                         tabel[linie][coloana] = cuvant;
-                    if(tabel[coloana][linie]=="??")
+                    }
+                    if(tabel[coloana][linie]=="??"){
+                        schimbare = true;
                         tabel[coloana][linie] = cuvant;
+                    }
                 }
             }
             Finale.clear();
