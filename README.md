@@ -1,16 +1,10 @@
-# LFA_Tema2
-Se introduce in automat.txt automatul pe care vrem sa il reducem la unul minimal
+# DFA to minimal automaton
+The program reads the automaton to be minimized from the "automaton.txt" file, following this format:
 
-formatul este :
+• Line 1: Initial state
 
-linia 1 : starea initiala
+• Subsequent lines: Node edge Node
 
-urmatoarele linii : nod muchie nod
+• Last line: Final states
 
-ultima linie : starile finale
-
-in output.txt se printeaza automatul minimal sub aceeasi forma
-
-automatul minimal este si construit in memorie , nu doar afisat
-
-pot fi verificate cuvinte pe noul automat
+The minimized / minimal automaton is constructed in memory and printed in the "output.txt" file using the same format. The program also allows the verification of words on the new automaton
